@@ -20,10 +20,6 @@ export default function CustomDrawer(props) {
   const navigation = useNavigation();
   const { user } = useSelector((state) => state.auth);
   const [modalVisible, setModalVisible] = useState(false);
-  const { data, isLoading, refetch, isRefetching } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => getProfile(),
-  });
   return (
     <View className='flex-1 bg-[#271b2d] pt-14'>
       <View className='w-full px-6'>
@@ -31,28 +27,14 @@ export default function CustomDrawer(props) {
           style={tw.style('w-full border-b border-gray-400 pb-4')}
           onPress={() => navigation.navigate('Profile')}
         >
-          {data?.avatar ? (
-            <Avatar
-              image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}
-              size={38}
-              style={tw.style('my-auto')}
-            />
-          ) : (
-            <Avatar label={user?.name} size={38} style={tw.style('my-auto')} />
-          )}
+          <Avatar
+            image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}
+            size={38}
+            style={tw.style('my-auto')}
+          />
           <View className='w-full flex justify-start pt-3'>
-            <Text className='font-bold text-lg text-white'>{user?.name}</Text>
-            <Text className='text-sm text-gray-400 text-left'>
-              @{user?.handle}
-            </Text>
-            <View className='mt-4 flex flex-row space-x-3'>
-              <Text className='text-sm text-gray-200 text-left'>
-                {data?.followers} <Text className='font-bold'>Followers</Text>
-              </Text>
-              <Text className='text-sm text-gray-200 text-left'>
-                {data?.following} <Text className='font-bold'>Following</Text>
-              </Text>
-            </View>
+            <Text className='font-bold text-lg text-white'>Salman M.</Text>
+            <Text className='text-sm text-gray-400 text-left'>@theartist</Text>
           </View>
         </Pressable>
       </View>

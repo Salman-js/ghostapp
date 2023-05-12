@@ -13,126 +13,13 @@ import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useToast } from 'react-native-toast-notifications';
-import { getProfile } from '../api/auth';
-import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { getMyBookmarks, getMyLikes, getMyTawts } from '../api/tawts';
 import { Button } from '@rneui/themed';
 
 const ProfileScreen = ({ navigation }) => {
   const scrollView = useRef(null);
   const toast = useToast(null);
   const { user } = useSelector((state) => state.auth);
-  const { data, isLoading, refetch, isInitialLoading } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => getProfile(),
-    onError: (error) => {
-      console.log('Request: ', error.request);
-      console.log('Response: ', error.response);
-      if (error.response) {
-        if (error.response?.data.token) {
-          toast.show('Session expired, Login required', {
-            icon: <Feather name='alert-circle' size={20} color='white' />,
-            placement: 'bottom',
-            type: 'danger',
-            duration: 4000,
-            style: { marginBottom: 50 },
-            textStyle: { padding: 0 },
-          });
-        }
-        if (error.response.data.unknown) {
-          toast.show('Server error. Please, try again', {
-            icon: <Feather name='alert-circle' size={20} color='white' />,
-            placement: 'bottom',
-            type: 'danger',
-            duration: 4000,
-            style: { marginBottom: 50 },
-            textStyle: { padding: 0 },
-          });
-        }
-      } else if (error.request) {
-        toast.show('Error connecting to the server', {
-          icon: <Feather name='alert-circle' size={20} color='white' />,
-          placement: 'bottom',
-          type: 'danger',
-          duration: 4000,
-          style: { marginBottom: 50 },
-          textStyle: { padding: 0 },
-        });
-      } else {
-        toast.show('Unknown Error. Please, try again', {
-          icon: <Feather name='alert-circle' size={20} color='white' />,
-          placement: 'bottom',
-          type: 'danger',
-          duration: 4000,
-          style: { marginBottom: 50 },
-          textStyle: { padding: 0 },
-        });
-      }
-    },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
-  const tawtsQuery = useQuery({
-    queryKey: ['tawts', 'my'],
-    queryFn: () => getMyTawts(),
-    onError: (error) => {
-      console.log('Request: ', error.request);
-      console.log('Response: ', error.response);
-      if (error.response) {
-        if (error.response?.data.token) {
-          toast.show('Session expired, Login required', {
-            icon: <Feather name='alert-circle' size={20} color='white' />,
-            placement: 'bottom',
-            type: 'danger',
-            duration: 4000,
-            style: { marginBottom: 50 },
-            textStyle: { padding: 0 },
-          });
-        }
-        if (error.response.data.unknown) {
-          toast.show('Server error. Please, try again', {
-            icon: <Feather name='alert-circle' size={20} color='white' />,
-            placement: 'bottom',
-            type: 'danger',
-            duration: 4000,
-            style: { marginBottom: 50 },
-            textStyle: { padding: 0 },
-          });
-        }
-      } else if (error.request) {
-        toast.show('Error connecting to the server', {
-          icon: <Feather name='alert-circle' size={20} color='white' />,
-          placement: 'bottom',
-          type: 'danger',
-          duration: 4000,
-          style: { marginBottom: 50 },
-          textStyle: { padding: 0 },
-        });
-      } else {
-        toast.show('Unknown Error. Please, try again', {
-          icon: <Feather name='alert-circle' size={20} color='white' />,
-          placement: 'bottom',
-          type: 'danger',
-          duration: 4000,
-          style: { marginBottom: 50 },
-          textStyle: { padding: 0 },
-        });
-      }
-    },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
-  const myLikesQuery = useQuery({
-    queryKey: ['likes'],
-    queryFn: () => getMyLikes(),
-  });
-  const myBookmarksQuery = useQuery({
-    queryKey: ['bookmarks'],
-    queryFn: () => getMyBookmarks(),
-  });
   useEffect(() => {
     const scrollToTop = navigation.addListener('tabPress', (e) => {
       scrollView.current.scrollTo({ x: 5, y: 5, animated: true });

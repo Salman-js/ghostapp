@@ -187,7 +187,7 @@ const SignUpScreen = ({ navigation }) => {
               errorStyle={tw.style('hidden')}
               containerStyle={tw.style('mt-3')}
             />
-            <Button
+            {/* <Button
               title='Sign up'
               loading={loading}
               buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
@@ -206,6 +206,18 @@ const SignUpScreen = ({ navigation }) => {
               titleStyle={tw.style('font-bold text-xl')}
               containerStyle={tw.style('mt-3 mx-3 overflow-hidden')}
               onPress={onSubmit}
+            /> */}
+            <Button
+              title='Sign up'
+              buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
+                backgroundColor: '#271b2d',
+              })}
+              disabledStyle={tw.style('', {
+                backgroundColor: '#271b2d',
+              })}
+              titleStyle={tw.style('font-bold text-xl')}
+              containerStyle={tw.style('mt-3 mx-3 overflow-hidden')}
+              onPress={() => navigation.navigate('Main')}
             />
           </View>
         </Surface>
