@@ -20,9 +20,6 @@ export default function DrawerStack() {
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
         drawerType: 'front',
-        swipeMinDistance: 40,
-        swipeEnabled: true,
-        swipeEdgeWidth: 150,
         headerShown: false,
         drawerItemStyle: tw.style('rounded-lg px-3'),
         drawerLabelStyle: tw.style('-ml-4 text-blue-300 text-xl'),

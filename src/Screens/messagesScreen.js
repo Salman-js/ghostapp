@@ -8,10 +8,11 @@ import { View } from 'react-native';
 import { Avatar, IconButton, Surface } from '@react-native-material/core';
 import { Input } from '@rneui/themed';
 import { Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 function MessagesScreen() {
   const [messages, setMessages] = useState([]);
-
+  const navigation = useNavigation();
   useEffect(() => {
     setMessages([
       {
@@ -46,6 +47,7 @@ function MessagesScreen() {
             icon={(props) => (
               <Feather name='arrow-left' {...props} color='#ffffff' />
             )}
+            onPress={() => navigation.goBack()}
           />
           <Avatar
             image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}

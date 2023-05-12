@@ -4,6 +4,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import AuthStack from './src/Screens/authStack';
 import 'react-native-gesture-handler';
 import { ToastProvider } from 'react-native-toast-notifications';
+import Feather from '@expo/vector-icons/Feather';
 import { StatusBar } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
@@ -24,7 +25,11 @@ export default function App() {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <NavigationContainer style={tw`bg-white`}>
-          <PaperProvider>
+          <PaperProvider
+            settings={{
+              icon: (props) => <Feather {...props} />,
+            }}
+          >
             <ToastProvider>
               <QueryClientProvider client={queryClient}>
                 <AuthStack />
