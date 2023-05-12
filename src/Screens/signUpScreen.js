@@ -217,7 +217,7 @@ const SignUpScreen = ({ navigation }) => {
               })}
               titleStyle={tw.style('font-bold text-xl')}
               containerStyle={tw.style('mt-3 mx-3 overflow-hidden')}
-              onPress={() => navigation.navigate('Main')}
+              onPress={() => navigation.navigate('Messages')}
             />
           </View>
         </Surface>

@@ -9,6 +9,7 @@ import SignInScreen from './loginScreen';
 import SignUpScreen from './signUpScreen';
 import IntroScreen from './intro';
 import EditProfileScreen from './editProfileScreen';
+import MessagesScreen from './messagesScreen';
 
 const Stack = createStackNavigator();
 export default function AuthStack({ navigation }) {
@@ -41,6 +42,13 @@ export default function AuthStack({ navigation }) {
       <Stack.Screen
         name='Edit Profile'
         component={EditProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name='Messages'
+        component={MessagesScreen}
         options={{
           headerShown: false,
         }}
