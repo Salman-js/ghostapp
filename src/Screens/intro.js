@@ -41,7 +41,7 @@ const IntroScreen = ({ navigation }) => {
               Feel the void
             </Text>
             <Text className='text-xl text-center text-slate-300 mb-6'>
-              Just Another Social Media App
+              Just Another Messaging App
             </Text>
             <Button
               title='Get started'

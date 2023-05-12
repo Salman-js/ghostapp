@@ -2,8 +2,6 @@ import { View, Text, Dimensions, Image, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Avatar, Pressable, Surface } from '@react-native-material/core';
-import PostItem from '../Components/postItem';
-import GroupItem from '../Components/groupItem';
 
 const GroupsScreen = ({ navigation }) => {
   const scrollView = useRef(null);
@@ -37,10 +35,7 @@ const GroupsScreen = ({ navigation }) => {
           horizontal
           alwaysBounceHorizontal
           ref={scrollView}
-        >
-          <GroupItem />
-          <GroupItem />
-        </ScrollView>
+        ></ScrollView>
       </View>
       <View className='w-full'>
         <Text
@@ -55,10 +50,7 @@ const GroupsScreen = ({ navigation }) => {
           horizontal
           alwaysBounceHorizontal
           ref={scrollView}
-        >
-          <GroupItem type='suggested' />
-          <GroupItem type='suggested' />
-        </ScrollView>
+        ></ScrollView>
       </View>
     </View>
   );

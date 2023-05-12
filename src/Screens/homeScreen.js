@@ -2,7 +2,6 @@ import { View, Text, Image, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Avatar, Pressable, Surface } from '@react-native-material/core';
-import PostItem from '../Components/postItem';
 import { FAB } from 'react-native-paper';
 import Material from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
@@ -147,18 +146,7 @@ const HomeScreen = ({ navigation }) => {
             }}
           />
         }
-      >
-        {tawtsQuery.data?.length ? (
-          tawtsQuery.data.map((tawt) => <PostItem key={tawt.id} item={tawt} />)
-        ) : (
-          <View className='m-auto flex items-center justify-center mt-12'>
-            <Material name='bubble-chart' color='#ece9e9' size={80} />
-            <Text className='text-xl text-slate-200 mt-2 text-center'>
-              No tawts
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+      ></ScrollView>
       <View className='absolute bottom-16 right-3 p-4 flex items-center justify-center'>
         <FAB
           icon='plus'

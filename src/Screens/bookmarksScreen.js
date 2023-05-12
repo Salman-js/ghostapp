@@ -2,7 +2,6 @@ import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Avatar, Pressable, Surface } from '@react-native-material/core';
-import PostItem from '../Components/postItem';
 import Feather from '@expo/vector-icons/Feather';
 import Material from '@expo/vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
@@ -114,18 +113,7 @@ const BookmarksScreen = ({ navigation }) => {
             }}
           />
         }
-      >
-        {data?.length ? (
-          data.map((tawt) => <PostItem key={tawt.id} item={tawt} />)
-        ) : (
-          <View className='m-auto flex items-center justify-center mt-12'>
-            <Material name='bubble-chart' color='#ece9e9' size={80} />
-            <Text className='text-xl text-slate-200 mt-2 text-center'>
-              No bookmarks
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+      ></ScrollView>
     </View>
   );
 };

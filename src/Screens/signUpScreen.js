@@ -14,9 +14,6 @@ import {
   FacebookSocialButton,
 } from 'react-native-social-buttons';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import PostItem from '../Components/postItem';
 import { Button, Input } from '@rneui/themed';
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../api/auth';
