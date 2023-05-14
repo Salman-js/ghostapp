@@ -9,27 +9,50 @@ import {
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
+import Feather from '@expo/vector-icons/Feather';
 import { auth } from '../../firebase';
 
 const SignInScreen = ({ navigation }) => {
   const toast = useToast(null);
+  const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
   });
 
   function onLogin() {
+    setLoading(true);
     auth
       .signInWithEmailAndPassword(loginData.email, loginData.password)
       .then((user) => {
         console.log(user);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        if (error.code === 'auth/wrong-password') {
+          toast.show('Invalid email or password', {
+            icon: <Feather name='alert-circle' size={20} color='white' />,
+            placement: 'top',
+            type: 'danger',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        } else {
+          toast.show('Unknown error. please, try again', {
+            icon: <Feather name='alert-circle' size={20} color='white' />,
+            placement: 'top',
+            type: 'danger',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        }
+        setLoading(false);
       });
   }
   useEffect(() => {
-    auth.onAuthStateChanged((authUser) => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         navigation.navigate('Main');
         navigation.reset({
@@ -38,6 +61,7 @@ const SignInScreen = ({ navigation }) => {
         });
       }
     });
+    return unsubscribe;
   }, []);
   return (
     <View className='h-full bg-[#271b2d] pt-14'>
@@ -108,6 +132,7 @@ const SignInScreen = ({ navigation }) => {
             />
             <Button
               title='Login'
+              loading={loading}
               buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
                 backgroundColor: '#271b2d',
               })}

@@ -8,7 +8,7 @@ import {
 } from 'react-native-social-buttons';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
-import { useDispatch, useSelector } from 'react-redux';
+import Feather from '@expo/vector-icons/Feather';
 import { useToast } from 'react-native-toast-notifications';
 import { auth } from '../../firebase';
 import { useNavigation } from '@react-navigation/native';
@@ -16,12 +16,14 @@ import { useNavigation } from '@react-navigation/native';
 const SignUpScreen = () => {
   const navigation = useNavigation();
   const toast = useToast(null);
+  const [loading, setLoading] = useState(false);
   const [signupData, setSignupData] = useState({
     name: '',
     email: '',
     password: '',
   });
   function onSubmit() {
+    setLoading(true);
     auth
       .createUserWithEmailAndPassword(signupData.email, signupData.password)
       .then((authUser) => {
@@ -30,13 +32,42 @@ const SignUpScreen = () => {
           .then((currentUser) => {
             console.log(currentUser);
           });
+        setLoading(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        if (error.code === 'auth/email-already-in-use') {
+          toast.show('There is already an account with that email', {
+            icon: <Feather name='alert-triangle' size={20} color='white' />,
+            placement: 'top',
+            type: 'warning',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        } else if (error.code === 'auth/weak-password') {
+          toast.show('Password is too weak', {
+            icon: <Feather name='alert-triangle' size={20} color='white' />,
+            placement: 'top',
+            type: 'warning',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        } else {
+          toast.show('Unknown error. please, try again', {
+            icon: <Feather name='alert-circle' size={20} color='white' />,
+            placement: 'top',
+            type: 'danger',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        }
+        setLoading(false);
       });
   }
   useEffect(() => {
-    auth.onAuthStateChanged((authUser) => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         auth.currentUser.updateProfile({
           displayName: signupData.name,
@@ -48,6 +79,7 @@ const SignUpScreen = () => {
         });
       }
     });
+    return unsubscribe;
   }, []);
   return (
     <View className='h-full bg-[#271b2d] pt-14'>
@@ -132,6 +164,7 @@ const SignUpScreen = () => {
             />
             <Button
               title='Sign up'
+              loading={loading}
               buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
                 backgroundColor: '#271b2d',
               })}
