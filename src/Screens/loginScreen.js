@@ -1,77 +1,42 @@
 import { View, Text, ScrollView } from 'react-native';
 import tw from 'twrnc';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Avatar,
-  Divider,
-  IconButton,
-  Pressable,
-  Surface,
-} from '@react-native-material/core';
+import React, { useEffect, useState } from 'react';
+import { Divider, IconButton, Surface } from '@react-native-material/core';
 import {
   GoogleSocialButton,
   FacebookSocialButton,
 } from 'react-native-social-buttons';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../api/auth';
 import { useToast } from 'react-native-toast-notifications';
-import { emptyErrors } from '../../slices/errorSlice';
+import { auth } from '../../firebase';
 
 const SignInScreen = ({ navigation }) => {
-  const scrollView = useRef(null);
-  const dispatch = useDispatch();
-  const { isAuthenticated, user, loading } = useSelector((state) => state.auth);
-  const errors = useSelector((state) => state.errors);
   const toast = useToast(null);
   const [loginData, setLoginData] = useState({
-    handle: '',
+    email: '',
     password: '',
   });
 
   function onLogin() {
-    dispatch(login(loginData.handle, loginData.password));
+    auth
+      .signInWithEmailAndPassword(loginData.email, loginData.password)
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
   useEffect(() => {
-    if (Object.keys(errors).length !== 0) {
-      if (errors.password || errors.user) {
-        toast.show('Invalid email or password', {
-          icon: <Icon name='alert-circle' size={20} color='white' />,
-          placement: 'top',
-          type: 'danger',
-          duration: 4000,
-          style: { marginTop: 50 },
-          textStyle: { padding: 0 },
-        });
-      } else if (errors.connection || errors.unknown) {
-        toast.show('Connection problem. Please try again', {
-          icon: <Icon name='alert-circle' size={20} color='white' />,
-          placement: 'bottom',
-          type: 'danger',
-          duration: 4000,
-          style: { padding: 0 },
-          textStyle: { padding: 0 },
+    auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        navigation.navigate('Main');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
         });
       }
-      console.log('Errors: ', errors);
-      setTimeout(() => {
-        dispatch(emptyErrors());
-      }, 8000);
-    }
-  }, [errors]);
-  useEffect(() => {
-    if (user) {
-      navigation.navigate('Main');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Main' }],
-      });
-    }
-  }, [isAuthenticated, user]);
-  useEffect(() => {
-    const scrollToTop = navigation.addListener('tabPress', (e) => {
-      scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
     });
   }, []);
   return (
@@ -100,23 +65,23 @@ const SignInScreen = ({ navigation }) => {
           <Text className='text-lg text-slate-300'>Login to your account</Text>
           <View className='w-full flex flex-col mt-10'>
             <Input
-              placeholder='Username'
+              placeholder='Email'
               lightTheme={false}
               inputStyle={tw.style('text-gray-200')}
               inputContainerStyle={tw.style('p-1 pl-3 rounded-xl', {
                 borderBottomWidth: 0,
                 backgroundColor: '#271b2d',
               })}
-              rightIcon={
-                (errors.user || errors.password) && (
-                  <Icon name='alert-circle' size={24} color='red' />
-                )
-              }
-              value={loginData.handle}
+              // rightIcon={
+              //   (errors.user || errors.password) && (
+              //     <Icon name='alert-circle' size={24} color='red' />
+              //   )
+              // }
+              value={loginData.email}
               onChangeText={(e) =>
                 setLoginData({
                   ...loginData,
-                  handle: e,
+                  email: e,
                 })
               }
               errorStyle={tw.style('hidden')}
@@ -141,9 +106,8 @@ const SignInScreen = ({ navigation }) => {
               errorStyle={tw.style('hidden')}
               containerStyle={tw.style('mt-3')}
             />
-            {/* <Button
+            <Button
               title='Login'
-              loading={loading}
               buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
                 backgroundColor: '#271b2d',
               })}
@@ -153,13 +117,13 @@ const SignInScreen = ({ navigation }) => {
                 backgroundColor: '#271b2d',
               })}
               disabled={
-                !loginData.handle.trim().length ||
+                !loginData.email.trim().length ||
                 !loginData.password.trim().length
               }
               onPress={onLogin}
-            /> */}
+            />
 
-            <Button
+            {/* <Button
               title='Login'
               buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
                 backgroundColor: '#271b2d',
@@ -170,7 +134,7 @@ const SignInScreen = ({ navigation }) => {
               titleStyle={tw.style('font-bold text-xl')}
               containerStyle={tw.style('mt-3 mx-3 overflow-hidden')}
               onPress={() => navigation.navigate('Main')}
-            />
+            /> */}
           </View>
         </Surface>
         <View className='w-full flex flex-row items-center justify-center'>

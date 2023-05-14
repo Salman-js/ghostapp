@@ -1,12 +1,22 @@
-import { View, Text, Dimensions, Image, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
-import { Avatar, Pressable, Surface } from '@react-native-material/core';
+import {
+  Avatar,
+  IconButton,
+  Pressable,
+  Surface,
+} from '@react-native-material/core';
+import Feather from '@expo/vector-icons/Feather';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useSelector } from 'react-redux';
+import { useToast } from 'react-native-toast-notifications';
+import { RefreshControl } from 'react-native';
 
-const AnalyticsScreen = ({ navigation }) => {
+const ContactsScreen = ({ navigation }) => {
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
+  const toast = useToast(null);
   useEffect(() => {
     const scrollToTop = navigation.addListener('tabPress', (e) => {
       scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
@@ -20,25 +30,15 @@ const AnalyticsScreen = ({ navigation }) => {
         )}
         elevation={1}
       >
-        <View className='overflow-hidden rounded-full'>
-          <Pressable onPress={() => navigation.openDrawer()}>
-            {user?.avatar ? (
-              <Avatar
-                image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}
-                size={38}
-                style={tw.style('my-auto')}
-              />
-            ) : (
-              <Avatar
-                label={user?.name}
-                size={38}
-                style={tw.style('my-auto')}
-              />
-            )}
-          </Pressable>
-        </View>
-        <Text className='text-2xl font-bold text-slate-200 my-auto ml-4'>
-          Analytics
+        <IconButton
+          icon={(props) => (
+            <AntDesign name='arrowleft' {...props} color='#ece9e9' />
+          )}
+          style={tw.style('')}
+          onPress={() => navigation.goBack()}
+        />
+        <Text className='text-2xl font-bold text-slate-200 my-auto'>
+          Contacts
         </Text>
       </Surface>
       <ScrollView
@@ -51,4 +51,4 @@ const AnalyticsScreen = ({ navigation }) => {
   );
 };
 
-export default AnalyticsScreen;
+export default ContactsScreen;

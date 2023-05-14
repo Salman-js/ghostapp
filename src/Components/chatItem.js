@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import tw from 'twrnc';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Button, ListItem } from '@rneui/themed';
@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const ChatItem = () => {
   const navigation = useNavigation();
+  const [direction, setDirection] = useState('');
   return (
     <ListItem.Swipeable
       style={tw.style('bg-transparent pt-0')}
@@ -17,20 +18,29 @@ const ChatItem = () => {
       leftStyle={tw.style('')}
       rightStyle={tw.style('')}
       leftContent={(reset) => (
-        <Button
-          title='Info'
-          icon={{ name: 'info', color: 'white' }}
-          buttonStyle={{ minHeight: '100%' }}
-        />
+        <>
+          {direction === 'left' && (
+            <Button
+              title='Info'
+              icon={{ name: 'info', color: 'white' }}
+              buttonStyle={tw.style('min-h-full')}
+            />
+          )}
+        </>
       )}
       rightContent={(reset) => (
-        <Button
-          title='Delete'
-          icon={{ name: 'delete', color: 'white' }}
-          buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
-        />
+        <>
+          {direction === 'right' && (
+            <Button
+              title='Delete'
+              icon={{ name: 'delete', color: 'white' }}
+              buttonStyle={tw.style('min-h-full bg-red-500')}
+            />
+          )}
+        </>
       )}
       onPress={() => navigation.navigate('Messages')}
+      onSwipeBegin={(direction) => setDirection(direction)}
     >
       <Avatar
         image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}

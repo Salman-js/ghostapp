@@ -10,6 +10,7 @@ import { useToast } from 'react-native-toast-notifications';
 import { Button, ListItem } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
+import { auth } from '../../firebase';
 
 const HomeScreen = ({ navigation }) => {
   const scrollView = useRef(null);
@@ -20,15 +21,17 @@ const HomeScreen = ({ navigation }) => {
       scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
     });
   }, []);
-  // useEffect(() => {
-  //   if (!user) {
-  //     navigation.navigate('Intro');
-  //     navigation.reset({
-  //       index: 0,
-  //       routes: [{ name: 'Intro' }],
-  //     });
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigation.navigate('Intro');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Intro' }],
+        });
+      }
+    });
+  }, []);
   return (
     <View className='h-full flex justify-between items-center bg-[#271b2d] w-full'>
       <Surface
@@ -77,6 +80,7 @@ const HomeScreen = ({ navigation }) => {
             backgroundColor: '#4b3c59',
           })}
           color='white'
+          onPress={() => auth.signOut()}
         />
       </View>
     </View>

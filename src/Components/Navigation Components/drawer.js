@@ -21,10 +21,10 @@ export default function CustomDrawer(props) {
   const { user } = useSelector((state) => state.auth);
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <View className='flex-1 bg-[#271b2d] pt-14'>
-      <View className='w-full px-6'>
+    <View className='flex-1 bg-[#271b2d]'>
+      <View className='w-full px-6 bg-[#2d1f34] pt-14'>
         <Pressable
-          style={tw.style('w-full border-b border-gray-400 pb-4')}
+          style={tw.style('w-full pb-4')}
           onPress={() => navigation.navigate('Profile')}
         >
           <Avatar
@@ -46,28 +46,6 @@ export default function CustomDrawer(props) {
       >
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <View className='w-full'>
-        <View className='flex-col items-center py-3 border-t border-gray-400 bg-[#271b2d] mx-3'>
-          <Pressable
-            style={tw`w-full flex-row p-4`}
-            onPress={() => navigation.navigate('Landing')}
-          >
-            <AntDesign
-              name='questioncircleo'
-              size={28}
-              style={tw``}
-              {...props}
-              color='#e4dddd'
-            />
-            <Text
-              style={tw`text-xl text-gray-200 w-full ml-4 my-auto`}
-              variant='body1'
-            >
-              FAQ
-            </Text>
-          </Pressable>
-        </View>
-      </View>
     </View>
   );
 }
