@@ -14,6 +14,7 @@ import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
 import { getProfile, logout } from '../../api/auth';
 import { useQuery } from '@tanstack/react-query';
+import { auth } from '../../../firebase';
 
 export default function CustomDrawer(props) {
   const dispatch = useDispatch();
@@ -28,19 +29,23 @@ export default function CustomDrawer(props) {
           onPress={() => navigation.navigate('Profile')}
         >
           <Avatar
-            image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}
+            label={auth.currentUser?.displayName}
             size={38}
             style={tw.style('my-auto')}
           />
           <View className='w-full flex justify-start pt-3'>
-            <Text className='font-bold text-lg text-white'>Salman M.</Text>
-            <Text className='text-sm text-gray-400 text-left'>@theartist</Text>
+            <Text className='font-bold text-lg text-white'>
+              {auth.currentUser?.displayName}
+            </Text>
+            <Text className='text-sm text-gray-400 text-left'>
+              {auth.currentUser?.email}
+            </Text>
           </View>
         </Pressable>
       </View>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={tw.style('-mt-4', {
+        contentContainerStyle={tw.style('-mt-10', {
           backgroundColor: '#271b2d',
         })}
       >

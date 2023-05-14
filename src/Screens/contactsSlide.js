@@ -14,7 +14,7 @@ import { useToast } from 'react-native-toast-notifications';
 import { RefreshControl } from 'react-native';
 import ContactItem from '../Components/contactItem';
 
-const ContactsScreen = ({ navigation }) => {
+const ContactsSlide = ({ navigation }) => {
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const toast = useToast(null);
@@ -27,7 +27,7 @@ const ContactsScreen = ({ navigation }) => {
     <View className='h-full flex justify-between items-center bg-[#271b2d] w-full'>
       <Surface
         style={tw.style(
-          'w-full flex flex-row justify-between p-4 pt-14 bg-transparent'
+          'w-full flex flex-row justify-between p-4 bg-transparent'
         )}
         elevation={1}
       >
@@ -56,4 +56,4 @@ const ContactsScreen = ({ navigation }) => {
   );
 };
 
-export default ContactsScreen;
+export default ContactsSlide;

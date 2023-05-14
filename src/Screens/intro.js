@@ -5,18 +5,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ImageBackground } from 'react-native';
 import { Button } from '@rneui/themed';
 import { useSelector } from 'react-redux';
+import { auth } from '../../firebase';
 
 const IntroScreen = ({ navigation }) => {
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
-    if (user) {
-      navigation.navigate('Main');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Main' }],
-      });
-    }
-  }, [user]);
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        navigation.navigate('Main');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
+      }
+    });
+    return unsubscribe;
+  }, []);
   return (
     <View className='h-full flex justify-between items-center'>
       <ImageBackground

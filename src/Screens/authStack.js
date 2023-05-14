@@ -10,6 +10,7 @@ import SignUpScreen from './signUpScreen';
 import IntroScreen from './intro';
 import EditProfileScreen from './editProfileScreen';
 import MessagesScreen from './messagesScreen';
+import ContactsSlide from './contactsSlide';
 
 const Stack = createStackNavigator();
 export default function AuthStack({ navigation }) {
@@ -51,6 +52,14 @@ export default function AuthStack({ navigation }) {
         component={MessagesScreen}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name='Contacts Slide'
+        component={ContactsSlide}
+        options={{
+          headerShown: false,
+          ...TransitionPresets.ModalPresentationIOS,
         }}
       />
     </Stack.Navigator>

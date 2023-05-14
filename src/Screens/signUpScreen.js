@@ -27,10 +27,16 @@ const SignUpScreen = () => {
     auth
       .createUserWithEmailAndPassword(signupData.email, signupData.password)
       .then((authUser) => {
-        auth
-          .signInWithEmailAndPassword(signupData.email, signupData.password)
-          .then((currentUser) => {
-            console.log(currentUser);
+        auth.currentUser
+          .updateProfile({
+            displayName: signupData.name,
+          })
+          .then((result) => {
+            auth
+              .signInWithEmailAndPassword(signupData.email, signupData.password)
+              .then((currentUser) => {
+                console.log(currentUser);
+              });
           });
         setLoading(false);
       })
@@ -69,9 +75,6 @@ const SignUpScreen = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
-        auth.currentUser.updateProfile({
-          displayName: signupData.name,
-        });
         navigation.navigate('Main');
         navigation.reset({
           index: 0,

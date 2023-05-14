@@ -11,16 +11,13 @@ import { Button, ListItem } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
 import { auth } from '../../firebase';
+import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
 
 const HomeScreen = ({ navigation }) => {
+  const { isRefreshing, refresh, refreshToken } = useRefreshToken();
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const toast = useToast(null);
-  useEffect(() => {
-    const scrollToTop = navigation.addListener('tabPress', (e) => {
-      scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
-    });
-  }, []);
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (!user) {
@@ -31,6 +28,9 @@ const HomeScreen = ({ navigation }) => {
         });
       }
     });
+  }, []);
+  useEffect(() => {
+    refresh();
   }, []);
   return (
     <View className='h-full flex justify-between items-center bg-[#271b2d] w-full'>
@@ -45,9 +45,10 @@ const HomeScreen = ({ navigation }) => {
           onPress={() => navigation.openDrawer()}
         />
         <Pressable
-          onPress={() =>
-            scrollView.current.scrollTo({ x: 5, y: 5, animated: true })
-          }
+          onPress={() => {
+            scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
+            auth.signOut();
+          }}
           style={tw.style('my-auto')}
         >
           <Image
@@ -80,7 +81,7 @@ const HomeScreen = ({ navigation }) => {
             backgroundColor: '#4b3c59',
           })}
           color='white'
-          onPress={() => auth.signOut()}
+          onPress={() => navigation.navigate('Contacts Slide')}
         />
       </View>
     </View>
