@@ -25,7 +25,6 @@ const SignInScreen = ({ navigation }) => {
     setLoading(true);
     signInWithEmailAndPassword(auth, loginData.email, loginData.password)
       .then((user) => {
-        console.log(user);
         setLoading(false);
       })
       .catch((error) => {

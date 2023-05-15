@@ -37,7 +37,7 @@ const HomeScreen = ({ navigation }) => {
     <View className='h-full flex justify-between items-center bg-[#271b2d] w-full'>
       <Surface
         style={tw.style('w-full flex flex-row justify-between p-4 pt-14', {
-          backgroundColor: '#271b2d',
+          backgroundColor: '#32283c',
         })}
         elevation={2}
       >

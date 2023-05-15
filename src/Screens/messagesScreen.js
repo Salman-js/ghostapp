@@ -1,7 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { GiftedChat } from 'react-native-gifted-chat';
+import {
+  GiftedChat,
+  InputToolbar,
+  Message,
+  MessageText,
+  Send,
+} from 'react-native-gifted-chat';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import tw from 'twrnc';
 import { View } from 'react-native';
@@ -62,9 +68,9 @@ function MessagesScreen() {
   return (
     <View className='h-full bg-[#271b2d] w-full'>
       <Surface
-        style={tw.style(
-          'w-full flex flex-row justify-between p-4 pt-14 pl-2 bg-transparent'
-        )}
+        style={tw.style('w-full flex flex-row justify-between p-4 pt-14 pl-2', {
+          backgroundColor: '#32283c',
+        })}
         elevation={3}
       >
         <View className='flex flex-row space-x-2 my-auto'>
@@ -91,7 +97,18 @@ function MessagesScreen() {
         />
       </Surface>
       <GiftedChat
-        messages={messages}
+        messages={[
+          {
+            _id: 1,
+            text: 'Hello developer',
+            createdAt: new Date(),
+            user: {
+              _id: 2,
+              name: 'React Native',
+              avatar: 'https://placeimg.com/140/140/any',
+            },
+          },
+        ]}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: 1,
@@ -100,14 +117,32 @@ function MessagesScreen() {
         messagesContainerStyle={tw.style('w-full py-3', {
           backgroundColor: '#271b2d',
         })}
+        renderMessage={(props) => (
+          <Message {...props} containerStyle={tw.style('bg-black')} />
+        )}
+        renderAvatar={null}
+        renderSend={(props) => (
+          <Send
+            {...props}
+            containerStyle={tw.style('mx-3 bg-blue-500 rounded-full')}
+            textStyle={tw.style('text-gray-800')}
+          />
+        )}
+        renderInputToolbar={(props) => (
+          <InputToolbar
+            {...props}
+            containerStyle={tw.style('border-0', {
+              backgroundColor: '#32283c',
+              borderTopWidth: 0,
+            })}
+          />
+        )}
         scrollToBottom
         scrollToBottomComponent={() => (
           <AntDesign name='down' color='#181717' />
         )}
         isLoadingEarlier
-        textInputStyle={tw.style(
-          'border border-slate-300 rounded-full my-2 px-4'
-        )}
+        textInputStyle={tw.style('my-2 px-4 text-slate-200', {})}
       />
     </View>
   );

@@ -4,7 +4,6 @@ import { getAuth } from 'firebase/auth';
 import env from './env';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-console.log(env.API_KEY);
 const firebaseConfig = {
   apiKey: env.API_KEY,
   authDomain: env.AUTH_DOMAIN,
@@ -17,6 +16,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// const db = firebase.firestore();
 export const auth = getAuth();
 export const db = getFirestore(app);
