@@ -11,6 +11,7 @@ import { Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 import { newChat } from '../api/chats';
+import { auth } from '../../firebase';
 
 function MessagesScreen() {
   const [messages, setMessages] = useState([]);
@@ -46,8 +47,8 @@ function MessagesScreen() {
     sendMessageMutation.mutate({
       participants: [
         {
-          userId: 263457324586745,
-          name: 'Salman',
+          userId: auth.currentUser?.uid,
+          name: auth.currentUser?.displayName,
         },
         {
           userId: 3445677878,

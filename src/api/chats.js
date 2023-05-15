@@ -2,13 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { URI } from './constants';
 import { db } from '../../firebase';
+import { addDoc, collection } from 'firebase/firestore';
 
 // new chat
 export const newChat = async (chatData) => {
-  return await db
-    .collection('chats')
-    .add(chatData)
-    .then((res) => res);
+  return await addDoc(collection(db, 'chats'), chatData).then(
+    (docRef) => docRef
+  );
 };
 
 // Post a reply
