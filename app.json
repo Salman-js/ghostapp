@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#021734"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -19,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundImage": "./assets/icon-bg.png"
-      }
+      },
+      "package": "com.salman.et.ghost"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2fffa501-d425-4b3a-8187-29ddd0d3715b"
+      }
+    },
+    "owner": "salman.et"
   }
 }

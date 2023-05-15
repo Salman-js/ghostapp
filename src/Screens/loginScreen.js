@@ -29,6 +29,7 @@ const SignInScreen = ({ navigation }) => {
         setLoading(false);
       })
       .catch((error) => {
+        console.log(error);
         if (error.code === 'auth/wrong-password') {
           toast.show('Invalid email or password', {
             icon: <Feather name='alert-circle' size={20} color='white' />,
