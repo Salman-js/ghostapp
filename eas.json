@@ -4,15 +4,6 @@
   },
   "build": {
     "development": {
-      "env": {
-        "API_KEY": "AIzaSyCNxPaGioEsY_NGmJ7d5P0rPN6G5ndeR50",
-        "AUTH_DOMAIN": "rite-125da.firebaseapp.com",
-        "PROJECT_ID": "rite-125da",
-        "STORAGE_BUCKET": "rite-125da.appspot.com",
-        "MESSAGING_SENDER_ID": "999979045686",
-        "APP_ID": "1:999979045686:web:f66e273337567b6f035997",
-        "MEASURMENT_ID": "G-4QS44VEHVP"
-      },
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
@@ -26,15 +17,6 @@
       }
     },
     "production": {
-      "env": {
-        "API_KEY": "AIzaSyCNxPaGioEsY_NGmJ7d5P0rPN6G5ndeR50",
-        "AUTH_DOMAIN": "rite-125da.firebaseapp.com",
-        "PROJECT_ID": "rite-125da",
-        "STORAGE_BUCKET": "rite-125da.appspot.com",
-        "MESSAGING_SENDER_ID": "999979045686",
-        "APP_ID": "1:999979045686:web:f66e273337567b6f035997",
-        "MEASURMENT_ID": "G-4QS44VEHVP"
-      },
       "ios": {
         "resourceClass": "m1-medium"
       }
