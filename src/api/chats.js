@@ -1,19 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { URI } from './constants';
+import { db } from '../../firebase';
 
-// Post tawt
-export const postTawt = async (postData) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': await AsyncStorage.getItem('token'),
-    },
-    timeout: 5000,
-  };
-  return await axios
-    .post(`${URI}/api/post`, postData, config)
-    .then((res) => res.data);
+// new chat
+export const newChat = async (chatData) => {
+  return await db
+    .collection('chats')
+    .add(chatData)
+    .then((res) => res);
 };
 
 // Post a reply

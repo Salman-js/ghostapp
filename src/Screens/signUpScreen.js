@@ -10,8 +10,12 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
 import Feather from '@expo/vector-icons/Feather';
 import { useToast } from 'react-native-toast-notifications';
-import { auth } from '../../firebase';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../firebase';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -24,19 +28,19 @@ const SignUpScreen = () => {
   });
   function onSubmit() {
     setLoading(true);
-    auth
-      .createUserWithEmailAndPassword(signupData.email, signupData.password)
+    createUserWithEmailAndPassword(auth, signupData.email, signupData.password)
       .then((authUser) => {
         auth.currentUser
           .updateProfile({
             displayName: signupData.name,
           })
           .then((result) => {
-            auth
-              .signInWithEmailAndPassword(signupData.email, signupData.password)
-              .then((currentUser) => {
-                console.log(currentUser);
-              });
+            signInWithEmailAndPassword(
+              signupData.email,
+              signupData.password
+            ).then((currentUser) => {
+              console.log(currentUser);
+            });
           });
         setLoading(false);
       })

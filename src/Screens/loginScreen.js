@@ -10,6 +10,7 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
 import Feather from '@expo/vector-icons/Feather';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
 
 const SignInScreen = ({ navigation }) => {
@@ -22,8 +23,7 @@ const SignInScreen = ({ navigation }) => {
 
   function onLogin() {
     setLoading(true);
-    auth
-      .signInWithEmailAndPassword(loginData.email, loginData.password)
+    signInWithEmailAndPassword(auth, loginData.email, loginData.password)
       .then((user) => {
         console.log(user);
         setLoading(false);

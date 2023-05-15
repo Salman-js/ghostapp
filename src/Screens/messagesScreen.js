@@ -9,10 +9,21 @@ import { Avatar, IconButton, Surface } from '@react-native-material/core';
 import { Input } from '@rneui/themed';
 import { Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useMutation } from '@tanstack/react-query';
+import { newChat } from '../api/chats';
 
 function MessagesScreen() {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
+  const sendMessageMutation = useMutation({
+    mutationFn: newChat,
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   useEffect(() => {
     setMessages([
       {
@@ -32,6 +43,19 @@ function MessagesScreen() {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
+    sendMessageMutation.mutate({
+      participants: [
+        {
+          userId: 263457324586745,
+          name: 'Salman',
+        },
+        {
+          userId: 3445677878,
+          name: 'Salman',
+        },
+      ],
+      messages,
+    });
   }, []);
 
   return (

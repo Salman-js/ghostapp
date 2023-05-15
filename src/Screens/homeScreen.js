@@ -10,8 +10,9 @@ import { useToast } from 'react-native-toast-notifications';
 import { Button, ListItem } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
-import { auth } from '../../firebase';
 import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 const HomeScreen = ({ navigation }) => {
   const { isRefreshing, refresh, refreshToken } = useRefreshToken();
@@ -47,7 +48,7 @@ const HomeScreen = ({ navigation }) => {
         <Pressable
           onPress={() => {
             scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
-            auth.signOut();
+            signOut();
           }}
           style={tw.style('my-auto')}
         >
