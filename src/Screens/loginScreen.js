@@ -12,9 +12,12 @@ import { useToast } from 'react-native-toast-notifications';
 import Feather from '@expo/vector-icons/Feather';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../slices/authSlice';
 
 const SignInScreen = ({ navigation }) => {
   const toast = useToast(null);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     email: '',
@@ -25,6 +28,7 @@ const SignInScreen = ({ navigation }) => {
     setLoading(true);
     signInWithEmailAndPassword(auth, loginData.email, loginData.password)
       .then((user) => {
+        dispatch(setUser(user.user));
         setLoading(false);
       })
       .catch((error) => {
@@ -54,6 +58,7 @@ const SignInScreen = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
+        // dispatch(setUser(authUser));
         navigation.navigate('Main');
         navigation.reset({
           index: 0,

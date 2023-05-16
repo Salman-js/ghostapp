@@ -14,7 +14,6 @@ import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
 import { getProfile, logout } from '../../api/auth';
 import { useQuery } from '@tanstack/react-query';
-import { auth } from '../../../firebase';
 
 export default function CustomDrawer(props) {
   const dispatch = useDispatch();
@@ -29,16 +28,16 @@ export default function CustomDrawer(props) {
           onPress={() => navigation.navigate('Profile')}
         >
           <Avatar
-            label={auth.currentUser?.displayName}
+            label={user?.displayName}
             size={38}
             style={tw.style('my-auto')}
           />
           <View className='w-full flex justify-start pt-3'>
             <Text className='font-bold text-lg text-white'>
-              {auth.currentUser?.displayName}
+              {user?.displayName}
             </Text>
             <Text className='text-sm text-gray-400 text-left'>
-              {auth.currentUser?.email}
+              {user?.email}
             </Text>
           </View>
         </Pressable>

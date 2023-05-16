@@ -16,10 +16,13 @@ import {
 } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../firebase';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../slices/authSlice';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
   const toast = useToast(null);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [signupData, setSignupData] = useState({
     name: '',
@@ -39,7 +42,7 @@ const SignUpScreen = () => {
               signupData.email,
               signupData.password
             ).then((currentUser) => {
-              console.log(currentUser);
+              dispatch(setUser(currentUser.user));
             });
           });
         setLoading(false);

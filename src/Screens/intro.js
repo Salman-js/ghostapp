@@ -21,6 +21,15 @@ const IntroScreen = ({ navigation }) => {
     });
     return unsubscribe;
   }, []);
+  useEffect(() => {
+    if (user) {
+      navigation.navigate('Main');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
+    }
+  }, [user]);
   return (
     <View className='h-full flex justify-between items-center'>
       <ImageBackground

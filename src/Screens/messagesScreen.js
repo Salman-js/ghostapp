@@ -19,6 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 import { newChat } from '../api/chats';
 import { auth } from '../../firebase';
+import { useSelector } from 'react-redux';
 
 function MessagesScreen() {
   const initMessages = [
@@ -35,6 +36,7 @@ function MessagesScreen() {
   ];
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
+  const { user } = useSelector((state) => state.auth);
   const sendMessageMutation = useMutation({
     mutationFn: newChat,
     onSuccess: (res) => {
@@ -46,12 +48,13 @@ function MessagesScreen() {
   });
   useEffect(() => {
     setMessages(
-      initMessages.map((msg) => {
+      initMessages.map((msg, index) => {
         return {
+          _id: new Date().getTime() + index,
           text: msg.body,
           createdAt: msg.createdAt,
           user: {
-            _id: msg.sender === auth.currentUser?.uid ? 1 : 2,
+            _id: msg.sender === user?.uid ? 1 : 2,
           },
         };
       })
@@ -123,6 +126,7 @@ function MessagesScreen() {
         messagesContainerStyle={tw.style('w-full py-3', {
           backgroundColor: '#271b2d',
         })}
+        placeholder='Message'
         renderBubble={(props) => (
           <Bubble
             {...props}
@@ -146,17 +150,42 @@ function MessagesScreen() {
           />
         )}
         renderAvatar={null}
-        renderSend={(props) => (
-          <Send
-            {...props}
-            containerStyle={tw.style('mr-3 bg-blue-500 rounded-2xl', {
-              marginBottom: 6,
-            })}
-            textStyle={tw.style('text-gray-800', {
-              color: '#32283c',
-            })}
-          />
-        )}
+        renderSend={(props) => {
+          const { text, onSend } = props;
+          return (
+            <>
+              {text.trim() && onSend && (
+                <IconButton
+                  {...props}
+                  icon={(props) => (
+                    <Ionicons
+                      name='paper-plane'
+                      {...props}
+                      color='#3a81f6'
+                      style={tw.style('', {
+                        transform: [{ rotate: '45deg' }],
+                      })}
+                      size={30}
+                      onPress={() => {
+                        onSend(
+                          {
+                            _id: new Date().getTime(),
+                            text: text,
+                            createdAt: new Date(),
+                            user: { _id: 1 },
+                          },
+                          true
+                        );
+                      }}
+                    />
+                  )}
+                  style={tw.style('mr-3')}
+                  disabled={!props.text.trim().length}
+                />
+              )}
+            </>
+          );
+        }}
         renderInputToolbar={(props) => (
           <InputToolbar
             {...props}
@@ -166,13 +195,12 @@ function MessagesScreen() {
             })}
           />
         )}
+        alwaysShowSend={false}
         scrollToBottom
         scrollToBottomComponent={() => (
           <AntDesign name='down' color='#181717' />
         )}
-        textInputStyle={tw.style(
-          'my-2 px-5 border border-gray-600 rounded-2xl mr-3 text-slate-200'
-        )}
+        textInputStyle={tw.style('my-2 px-5 rounded-2xl mr-3 text-slate-200')}
       />
     </View>
   );

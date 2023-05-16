@@ -19,16 +19,15 @@ const HomeScreen = ({ navigation }) => {
   const { user } = useSelector((state) => state.auth);
   const toast = useToast(null);
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        navigation.navigate('Intro');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Intro' }],
-        });
-      }
-    });
-  }, []);
+    console.log(user);
+    if (!user) {
+      navigation.navigate('Intro');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Intro' }],
+      });
+    }
+  }, [user]);
   useEffect(() => {
     refresh();
   }, []);

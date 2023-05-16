@@ -9,16 +9,18 @@ import {
 } from '@react-native-material/core';
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from 'react-native-toast-notifications';
 import { RefreshControl } from 'react-native';
 import { Popover } from 'native-base';
 import { Button } from '@rneui/themed';
 import { auth } from '../../firebase';
+import { setLogout } from '../../slices/authSlice';
 
 const SettingsScreen = ({ navigation }) => {
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const toast = useToast(null);
   useEffect(() => {
     const scrollToTop = navigation.addListener('tabPress', (e) => {
@@ -81,6 +83,7 @@ const SettingsScreen = ({ navigation }) => {
                 containerStyle={tw.style('bg-black')}
                 onPress={() => {
                   auth.signOut();
+                  dispatch(setLogout());
                 }}
               >
                 <Feather
