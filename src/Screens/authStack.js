@@ -11,6 +11,7 @@ import IntroScreen from './intro';
 import EditProfileScreen from './editProfileScreen';
 import MessagesScreen from './messagesScreen';
 import ContactsSlide from './contactsSlide';
+import SearchScreen from './searchScreen';
 
 const Stack = createStackNavigator();
 export default function AuthStack({ navigation }) {
@@ -50,6 +51,13 @@ export default function AuthStack({ navigation }) {
       <Stack.Screen
         name='Messages'
         component={MessagesScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name='Search'
+        component={SearchScreen}
         options={{
           headerShown: false,
         }}

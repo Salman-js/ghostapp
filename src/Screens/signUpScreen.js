@@ -10,10 +10,7 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
 import Feather from '@expo/vector-icons/Feather';
 import { useToast } from 'react-native-toast-notifications';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../firebase';
 import { useDispatch } from 'react-redux';
@@ -33,17 +30,15 @@ const SignUpScreen = () => {
     setLoading(true);
     createUserWithEmailAndPassword(auth, signupData.email, signupData.password)
       .then((authUser) => {
-        auth.currentUser
-          .updateProfile({
-            displayName: signupData.name,
+        console.log('Auth: ', authUser);
+        updateProfile(auth.currentUser, {
+          displayName: signupData.name,
+        })
+          .then(() => {
+            dispatch(setUser(authUser.user));
           })
-          .then((result) => {
-            signInWithEmailAndPassword(
-              signupData.email,
-              signupData.password
-            ).then((currentUser) => {
-              dispatch(setUser(currentUser.user));
-            });
+          .catch((error) => {
+            console.log(error);
           });
         setLoading(false);
       })
@@ -82,6 +77,7 @@ const SignUpScreen = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
+        console.log('Authenticated');
         navigation.navigate('Main');
         navigation.reset({
           index: 0,

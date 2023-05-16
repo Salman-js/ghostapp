@@ -7,20 +7,20 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useSelector } from 'react-redux';
 import { RefreshControl } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
-import { Button, ListItem } from '@rneui/themed';
+import { Button, ListItem, SearchBar } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
 import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
 import { auth } from '../../firebase';
-import { updateProfile } from 'firebase/auth';
 
-const HomeScreen = ({ navigation }) => {
+const SearchScreen = ({ navigation }) => {
   const { isRefreshing, refresh, refreshToken } = useRefreshToken();
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
+  const [searchString, setSearchString] = useState('');
   const toast = useToast(null);
   useEffect(() => {
-    console.log('User: ', user);
+    console.log(user);
     if (!user) {
       navigation.navigate('Intro');
       navigation.reset({
@@ -41,25 +41,23 @@ const HomeScreen = ({ navigation }) => {
         elevation={2}
       >
         <IconButton
-          icon={(props) => <Feather name='menu' {...props} color='#ffffff' />}
-          onPress={() => navigation.openDrawer()}
-        />
-        <Pressable
-          onPress={() => {
-            scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
-          }}
-          style={tw.style('my-auto')}
-        >
-          <Image
-            source={require('../../assets/logo.png')}
-            className='w-[40px] h-[40px]'
-          />
-        </Pressable>
-        <IconButton
           icon={(props) => (
-            <AntDesign name='search1' {...props} color='#ffffff' />
+            <Feather name='arrow-left' {...props} color='#ffffff' />
           )}
-          onPress={() => navigation.navigate('Search')}
+          onPress={() => navigation.goBack()}
+        />
+        <SearchBar
+          placeholder='Search'
+          platform='ios'
+          containerStyle={tw.style('w-11/12 p-0 bg-transparent')}
+          showCancel={false}
+          lightTheme={false}
+          autoFocus
+          inputContainerStyle={tw.style('p-0 bg-transparent')}
+          inputStyle={tw.style('text-gray-300 h-12')}
+          cancelButtonProps={{ style: tw.style('text-gray-300 hidden') }}
+          value={searchString}
+          onChangeText={(e) => setSearchString(e)}
         />
       </Surface>
       <ScrollView
@@ -69,23 +67,9 @@ const HomeScreen = ({ navigation }) => {
         ref={scrollView}
         bounces
         alwaysBounceVertical
-      >
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-      </ScrollView>
-      <View className='absolute bottom-3 right-3 p-4 flex items-center justify-center'>
-        <FAB
-          icon='feather'
-          style={tw.style('text-white rounded-full', {
-            backgroundColor: '#4b3c59',
-          })}
-          color='white'
-          onPress={() => navigation.navigate('Contacts Slide')}
-        />
-      </View>
+      ></ScrollView>
     </View>
   );
 };
 
-export default HomeScreen;
+export default SearchScreen;
