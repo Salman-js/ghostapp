@@ -11,7 +11,6 @@ import { Button, ListItem } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
 import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
-import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 
 const HomeScreen = ({ navigation }) => {
@@ -48,7 +47,6 @@ const HomeScreen = ({ navigation }) => {
         <Pressable
           onPress={() => {
             scrollView.current.scrollTo({ x: 5, y: 5, animated: true });
-            signOut();
           }}
           style={tw.style('my-auto')}
         >

@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
+  Bubble,
   GiftedChat,
   InputToolbar,
   Message,
   MessageText,
   Send,
+  Time,
 } from 'react-native-gifted-chat';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -12,7 +14,6 @@ import Feather from '@expo/vector-icons/Feather';
 import tw from 'twrnc';
 import { View } from 'react-native';
 import { Avatar, IconButton, Surface } from '@react-native-material/core';
-import { Input } from '@rneui/themed';
 import { Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
@@ -20,6 +21,18 @@ import { newChat } from '../api/chats';
 import { auth } from '../../firebase';
 
 function MessagesScreen() {
+  const initMessages = [
+    {
+      body: 'Hi',
+      sender: auth.currentUser?.uid,
+      createdAt: new Date(),
+    },
+    {
+      body: 'Selam',
+      sender: 34534535646,
+      createdAt: new Date(),
+    },
+  ];
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const sendMessageMutation = useMutation({
@@ -32,37 +45,41 @@ function MessagesScreen() {
     },
   });
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ]);
+    setMessages(
+      initMessages.map((msg) => {
+        return {
+          text: msg.body,
+          createdAt: msg.createdAt,
+          user: {
+            _id: msg.sender === auth.currentUser?.uid ? 1 : 2,
+          },
+        };
+      })
+    );
   }, []);
 
   const onSend = useCallback((messages = []) => {
+    console.log(messages);
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
-    sendMessageMutation.mutate({
-      participants: [
-        {
-          userId: auth.currentUser?.uid,
-          name: auth.currentUser?.displayName,
-        },
-        {
-          userId: 3445677878,
-          name: 'Salman',
-        },
-      ],
-      messages,
-    });
+    // sendMessageMutation.mutate({
+    //   participants: [
+    //     {
+    //       userId: auth.currentUser?.uid,
+    //       name: auth.currentUser?.displayName,
+    //     },
+    //     {
+    //       userId: 3445677878,
+    //       name: 'Salman',
+    //     },
+    //   ],
+    //   messages: {
+    //     body: messages[0].createdAt,
+    //     sender: auth.currentUser?.uid,
+    //     createdAt: messages[0].createdAt,
+    //   },
+    // });
   }, []);
 
   return (
@@ -97,18 +114,7 @@ function MessagesScreen() {
         />
       </Surface>
       <GiftedChat
-        messages={[
-          {
-            _id: 1,
-            text: 'Hello developer',
-            createdAt: new Date(),
-            user: {
-              _id: 2,
-              name: 'React Native',
-              avatar: 'https://placeimg.com/140/140/any',
-            },
-          },
-        ]}
+        messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: 1,
@@ -117,15 +123,38 @@ function MessagesScreen() {
         messagesContainerStyle={tw.style('w-full py-3', {
           backgroundColor: '#271b2d',
         })}
-        renderMessage={(props) => (
-          <Message {...props} containerStyle={tw.style('bg-black')} />
+        renderBubble={(props) => (
+          <Bubble
+            {...props}
+            wrapperStyle={{
+              left: tw.style('bg-slate-700'),
+            }}
+            textStyle={{
+              left: tw.style('text-white'),
+            }}
+            tickStyle={{
+              left: tw.style('text-white'),
+            }}
+            renderTime={(props) => (
+              <Time
+                {...props}
+                timeTextStyle={{
+                  left: tw.style('text-white'),
+                }}
+              />
+            )}
+          />
         )}
         renderAvatar={null}
         renderSend={(props) => (
           <Send
             {...props}
-            containerStyle={tw.style('mx-3 bg-blue-500 rounded-full')}
-            textStyle={tw.style('text-gray-800')}
+            containerStyle={tw.style('mr-3 bg-blue-500 rounded-2xl', {
+              marginBottom: 6,
+            })}
+            textStyle={tw.style('text-gray-800', {
+              color: '#32283c',
+            })}
           />
         )}
         renderInputToolbar={(props) => (
@@ -141,8 +170,9 @@ function MessagesScreen() {
         scrollToBottomComponent={() => (
           <AntDesign name='down' color='#181717' />
         )}
-        isLoadingEarlier
-        textInputStyle={tw.style('my-2 px-4 text-slate-200', {})}
+        textInputStyle={tw.style(
+          'my-2 px-5 border border-gray-600 rounded-2xl mr-3 text-slate-200'
+        )}
       />
     </View>
   );

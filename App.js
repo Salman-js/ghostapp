@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from './store';
+import { NativeBaseProvider } from 'native-base';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,11 +31,13 @@ export default function App() {
               icon: (props) => <Feather {...props} />,
             }}
           >
-            <ToastProvider>
-              <QueryClientProvider client={queryClient}>
-                <AuthStack />
-              </QueryClientProvider>
-            </ToastProvider>
+            <NativeBaseProvider>
+              <ToastProvider>
+                <QueryClientProvider client={queryClient}>
+                  <AuthStack />
+                </QueryClientProvider>
+              </ToastProvider>
+            </NativeBaseProvider>
           </PaperProvider>
           <StatusBar
             animated={true}

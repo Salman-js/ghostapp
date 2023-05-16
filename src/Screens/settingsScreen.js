@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import {
@@ -12,6 +12,9 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useSelector } from 'react-redux';
 import { useToast } from 'react-native-toast-notifications';
 import { RefreshControl } from 'react-native';
+import { Popover } from 'native-base';
+import { Button } from '@rneui/themed';
+import { auth } from '../../firebase';
 
 const SettingsScreen = ({ navigation }) => {
   const scrollView = useRef(null);
@@ -37,9 +40,60 @@ const SettingsScreen = ({ navigation }) => {
           style={tw.style('')}
           onPress={() => navigation.goBack()}
         />
-        <Text className='text-2xl font-bold text-slate-200 my-auto'>
-          Settings
-        </Text>
+        <Popover
+          trigger={(triggerProps) => {
+            return (
+              <TouchableOpacity {...triggerProps}>
+                <IconButton
+                  icon={(props) => (
+                    <Feather
+                      name='more-horizontal'
+                      {...props}
+                      color='#ffffff'
+                    />
+                  )}
+                  disabled
+                />
+              </TouchableOpacity>
+            );
+          }}
+          placement='bottom right'
+        >
+          <Popover.Content
+            accessibilityLabel='Delete Customerd'
+            w='40'
+            style={tw.style('p-0', {
+              backgroundColor: '#32283c',
+            })}
+            borderWidth={0}
+          >
+            <Popover.Body
+              style={tw.style('p-0', {
+                backgroundColor: '#32283c',
+              })}
+              borderWidth={0}
+            >
+              <Button
+                buttonStyle={tw.style('py-3', {
+                  backgroundColor: '#32283c',
+                })}
+                titleStyle={tw.style('text-lg text-red-500')}
+                containerStyle={tw.style('bg-black')}
+                onPress={() => {
+                  auth.signOut();
+                }}
+              >
+                <Feather
+                  name='log-out'
+                  color='#ee3030'
+                  size={23}
+                  style={tw.style('mr-3 my-auto')}
+                />
+                Logout
+              </Button>
+            </Popover.Body>
+          </Popover.Content>
+        </Popover>
       </Surface>
       <ScrollView
         className='w-full'
