@@ -15,25 +15,23 @@ import tw from 'twrnc';
 import { View } from 'react-native';
 import { Avatar, IconButton, Surface } from '@react-native-material/core';
 import { Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 import { newChat } from '../api/chats';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { useSelector } from 'react-redux';
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+} from 'firebase/firestore';
 
 function MessagesScreen() {
-  const initMessages = [
-    {
-      body: 'Hi',
-      sender: auth.currentUser?.uid,
-      createdAt: new Date(),
-    },
-    {
-      body: 'Selam',
-      sender: 34534535646,
-      createdAt: new Date(),
-    },
-  ];
+  const route = useRoute();
+  const { item } = route.params;
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const { user } = useSelector((state) => state.auth);
@@ -48,11 +46,11 @@ function MessagesScreen() {
   });
   useEffect(() => {
     setMessages(
-      initMessages.map((msg, index) => {
+      item.data.messages.map((msg, index) => {
         return {
           _id: new Date().getTime() + index,
           text: msg.body,
-          createdAt: msg.createdAt,
+          createdAt: new Date(msg.createdAt),
           user: {
             _id: msg.sender === user?.uid ? 1 : 2,
           },
@@ -60,29 +58,51 @@ function MessagesScreen() {
       })
     );
   }, []);
-
   const onSend = useCallback((messages = []) => {
     console.log(messages);
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
-    // sendMessageMutation.mutate({
-    //   participants: [
-    //     {
-    //       userId: auth.currentUser?.uid,
-    //       name: auth.currentUser?.displayName,
-    //     },
-    //     {
-    //       userId: 3445677878,
-    //       name: 'Salman',
-    //     },
-    //   ],
-    //   messages: {
-    //     body: messages[0].createdAt,
-    //     sender: auth.currentUser?.uid,
-    //     createdAt: messages[0].createdAt,
-    //   },
-    // });
+    if (messages.length > 0) {
+      const chatRef = doc(collection(db, 'chats'), item.id);
+      getDoc(chatRef).then((docSnapshot) => {
+        const chatData = docSnapshot.data();
+        const existingMessages = chatData.messages || [];
+
+        // Prepend the new message at index 0
+        const updatedMessages = [
+          {
+            body: messages[0].text,
+            sender: user?.uid,
+            createdAt: new Date().getTime(),
+          },
+          ...existingMessages,
+        ];
+
+        // Update the chat document with the modified messages array
+        return updateDoc(chatRef, { messages: updatedMessages });
+      });
+    } else {
+      sendMessageMutation.mutate({
+        participants: [
+          {
+            userId: user?.uid,
+            name: user?.displayName,
+          },
+          {
+            userId: 3445677878,
+            name: 'Salman',
+          },
+        ],
+        messages: [
+          {
+            body: messages[0].text,
+            sender: user?.uid,
+            createdAt: new Date().getTime(),
+          },
+        ],
+      });
+    }
   }, []);
 
   return (
@@ -101,12 +121,22 @@ function MessagesScreen() {
             onPress={() => navigation.goBack()}
           />
           <Avatar
-            image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}
+            label={
+              item.data.participants.filter(
+                (participant) => participant.userId !== user?.uid
+              )[0].name
+            }
             size={43}
             style={tw.style('my-auto')}
           />
           <View className='my-auto'>
-            <Text className='text-lg font-bold text-white'>Salman M.</Text>
+            <Text className='text-lg font-bold text-white'>
+              {
+                item.data.participants.filter(
+                  (participant) => participant.userId !== user?.uid
+                )[0].name
+              }
+            </Text>
             <Text className='text-xs text-gray-400'>Online</Text>
           </View>
         </View>
@@ -171,7 +201,7 @@ function MessagesScreen() {
                           {
                             _id: new Date().getTime(),
                             text: text,
-                            createdAt: new Date(),
+                            createdAt: new Date().getTime(),
                             user: { _id: 1 },
                           },
                           true

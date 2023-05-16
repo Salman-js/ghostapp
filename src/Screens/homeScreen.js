@@ -11,16 +11,18 @@ import { Button, ListItem } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
 import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { updateProfile } from 'firebase/auth';
+import { collection, onSnapshot, where } from 'firebase/firestore';
 
 const HomeScreen = ({ navigation }) => {
   const { isRefreshing, refresh, refreshToken } = useRefreshToken();
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const toast = useToast(null);
+  const [chats, setChats] = useState([]);
+  const chatsCollection = collection(db, 'chats');
   useEffect(() => {
-    console.log('User: ', user);
     if (!user) {
       navigation.navigate('Intro');
       navigation.reset({
@@ -30,7 +32,19 @@ const HomeScreen = ({ navigation }) => {
     }
   }, [user]);
   useEffect(() => {
-    refresh();
+    const unsubscribe = onSnapshot(
+      chatsCollection,
+      where('participants', 'array-contains', user?.id),
+      (snapshot) => {
+        setChats(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        );
+      }
+    );
+    return unsubscribe;
   }, []);
   return (
     <View className='h-full flex justify-between items-center bg-[#271b2d] w-full'>
@@ -70,9 +84,13 @@ const HomeScreen = ({ navigation }) => {
         bounces
         alwaysBounceVertical
       >
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
+        {chats.length ? (
+          <>
+            {chats.map((chat) => (
+              <ChatItem item={chat} key={chat.id} />
+            ))}
+          </>
+        ) : null}
       </ScrollView>
       <View className='absolute bottom-3 right-3 p-4 flex items-center justify-center'>
         <FAB

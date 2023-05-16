@@ -10,27 +10,19 @@ import { useToast } from 'react-native-toast-notifications';
 import { Button, ListItem, SearchBar } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
-import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
+import { listUsers } from 'firebase/auth';
 import { auth } from '../../firebase';
 
 const SearchScreen = ({ navigation }) => {
-  const { isRefreshing, refresh, refreshToken } = useRefreshToken();
   const scrollView = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const [searchString, setSearchString] = useState('');
   const toast = useToast(null);
+  async function fetchUsers(user) {
+    return await listUsers(auth);
+  }
   useEffect(() => {
-    console.log(user);
-    if (!user) {
-      navigation.navigate('Intro');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Intro' }],
-      });
-    }
-  }, [user]);
-  useEffect(() => {
-    refresh();
+    console.log(fetchUsers());
   }, []);
   return (
     <View className='h-full flex justify-between items-center bg-[#271b2d] w-full'>

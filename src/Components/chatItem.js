@@ -5,9 +5,12 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Button, ListItem } from '@rneui/themed';
 import { Avatar } from '@react-native-material/core';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import ago from 's-ago';
 
-const ChatItem = () => {
+const ChatItem = ({ item }) => {
   const navigation = useNavigation();
+  const { user } = useSelector((state) => state.auth);
   const [direction, setDirection] = useState('');
   return (
     <ListItem.Swipeable
@@ -17,17 +20,6 @@ const ChatItem = () => {
       })}
       leftStyle={tw.style('')}
       rightStyle={tw.style('')}
-      leftContent={(reset) => (
-        <>
-          {direction === 'left' && (
-            <Button
-              title='Info'
-              icon={{ name: 'info', color: 'white' }}
-              buttonStyle={tw.style('min-h-full')}
-            />
-          )}
-        </>
-      )}
       rightContent={(reset) => (
         <>
           {direction === 'right' && (
@@ -39,28 +31,42 @@ const ChatItem = () => {
           )}
         </>
       )}
-      onPress={() => navigation.navigate('Messages')}
+      onPress={() =>
+        navigation.navigate('Messages', {
+          item,
+        })
+      }
       onSwipeBegin={(direction) => setDirection(direction)}
     >
       <Avatar
-        image={{ uri: 'https://mui.com/static/images/avatar/1.jpg' }}
+        label={
+          item.data.participants.filter(
+            (participant) => participant.userId !== user?.uid
+          )[0].name
+        }
         size={38}
         style={tw.style('my-auto -mt-0')}
       />
       <ListItem.Content style={tw.style('border-b-2 border-slate-900 pb-3')}>
         <View className='w-full flex flex-row justify-between pr-6'>
           <ListItem.Title style={tw.style('text-slate-200 font-bold')}>
-            Hello Swiper
+            {
+              item.data.participants.filter(
+                (participant) => participant.userId !== user?.uid
+              )[0].name
+            }
           </ListItem.Title>
           <View className='flex flex-row space-x-1'>
-            <Text className='text-xs text-gray-500 my-auto'>09:32 AM</Text>
-            <Ionicons name='checkmark-done-outline' color='#6b6868' size={18} />
+            <Text className='text-xs text-gray-500 my-auto'>
+              {ago(new Date(item.data.messages[0]?.createdAt))}
+            </Text>
+            {item.data.messages[0]?.sender === user?.uid && (
+              <Ionicons name='checkmark' color='#6b6868' size={18} />
+            )}
           </View>
         </View>
         <ListItem.Subtitle style={tw.style('text-gray-400')} numberOfLines={1}>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde dolore
-          iste, repudiandae itaque exercitationem est omnis dolorum fugiat
-          corrupti saepe! Repudiandae adipisci odio aut magnam.
+          {item.data.messages[0]?.body}
         </ListItem.Subtitle>
       </ListItem.Content>
     </ListItem.Swipeable>

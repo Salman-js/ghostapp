@@ -10,10 +10,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import Modal from 'react-native-modal';
-import { Button } from 'react-native-paper';
-import { getProfile, logout } from '../../api/auth';
-import { useQuery } from '@tanstack/react-query';
 
 export default function CustomDrawer(props) {
   const dispatch = useDispatch();

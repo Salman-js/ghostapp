@@ -204,3 +204,22 @@ export const getMyBookmarks = async () => {
     .get(`${URI}/api/user/bookmarks`, config)
     .then((res) => res.data);
 };
+
+export const sortArray = (arr, order = 'descending') => {
+  const sortedArr = arr.sort((a, b) => {
+    console.log(Object.keys(a));
+    if (a['createdAt'] < b['createdAt']) {
+      return -1;
+    }
+    if (a['createdAt'] > b['createdAt']) {
+      return 1;
+    }
+    return 0;
+  });
+
+  if (order === 'descending') {
+    return sortedArr.reverse();
+  }
+
+  return sortedArr;
+};
