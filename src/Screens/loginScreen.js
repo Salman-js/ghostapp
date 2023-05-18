@@ -14,6 +14,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../slices/authSlice';
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const SignInScreen = ({ navigation }) => {
   const toast = useToast(null);
@@ -55,6 +56,19 @@ const SignInScreen = ({ navigation }) => {
         setLoading(false);
       });
   }
+
+  // async function onGoogleButtonPress() {
+  //   // Check if your device supports Google Play
+  //   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  //   // Get the users ID token
+  //   const { idToken } = await GoogleSignin.signIn();
+
+  //   // Create a Google credential with the token
+  //   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+  //   // Sign-in the user with the credential
+  //   return auth().signInWithCredential(googleCredential);
+  // }
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -176,7 +190,11 @@ const SignInScreen = ({ navigation }) => {
           {/* <FacebookAuth />
         <GoogleAuth /> */}
           <GoogleSocialButton
-            onPress={() => console.log('')}
+            // onPress={() =>
+            //   onGoogleButtonPress().then(() =>
+            //     console.log('Signed in with Google!')
+            //   )
+            // }
             buttonViewStyle={tw.style('w-full h-12 rounded-full border-0', {
               backgroundColor: '#271b2d',
             })}

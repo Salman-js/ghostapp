@@ -10,11 +10,16 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Input } from '@rneui/themed';
 import Feather from '@expo/vector-icons/Feather';
 import { useToast } from 'react-native-toast-notifications';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../slices/authSlice';
+import { addDoc, collection } from 'firebase/firestore';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -26,53 +31,55 @@ const SignUpScreen = () => {
     email: '',
     password: '',
   });
-  function onSubmit() {
+  async function onSubmit() {
     setLoading(true);
-    createUserWithEmailAndPassword(auth, signupData.email, signupData.password)
-      .then((authUser) => {
-        console.log('Auth: ', authUser);
-        updateProfile(auth.currentUser, {
-          displayName: signupData.name,
-        })
-          .then(() => {
-            dispatch(setUser(authUser.user));
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        setLoading(false);
-      })
-      .catch((error) => {
-        if (error.code === 'auth/email-already-in-use') {
-          toast.show('There is already an account with that email', {
-            icon: <Feather name='alert-triangle' size={20} color='white' />,
-            placement: 'top',
-            type: 'warning',
-            duration: 4000,
-            style: { marginTop: 50 },
-            textStyle: { padding: 0 },
-          });
-        } else if (error.code === 'auth/weak-password') {
-          toast.show('Password is too weak', {
-            icon: <Feather name='alert-triangle' size={20} color='white' />,
-            placement: 'top',
-            type: 'warning',
-            duration: 4000,
-            style: { marginTop: 50 },
-            textStyle: { padding: 0 },
-          });
-        } else {
-          toast.show('Unknown error. please, try again', {
-            icon: <Feather name='alert-circle' size={20} color='white' />,
-            placement: 'top',
-            type: 'danger',
-            duration: 4000,
-            style: { marginTop: 50 },
-            textStyle: { padding: 0 },
-          });
-        }
-        setLoading(false);
+    try {
+      const authUser = await createUserWithEmailAndPassword(
+        auth,
+        signupData.email,
+        signupData.password
+      );
+      await updateProfile(authUser.user, {
+        displayName: signupData.name,
       });
+      await addDoc(collection(db, 'users'), {
+        userId: authUser.user.uid,
+      });
+      dispatch(setUser(user.user));
+      setLoading(false);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      if (error.code === 'auth/email-already-in-use') {
+        toast.show('There is already an account with that email', {
+          icon: <Feather name='alert-triangle' size={20} color='white' />,
+          placement: 'top',
+          type: 'warning',
+          duration: 4000,
+          style: { marginTop: 50 },
+          textStyle: { padding: 0 },
+        });
+      } else if (error.code === 'auth/weak-password') {
+        toast.show('Password is too weak', {
+          icon: <Feather name='alert-triangle' size={20} color='white' />,
+          placement: 'top',
+          type: 'warning',
+          duration: 4000,
+          style: { marginTop: 50 },
+          textStyle: { padding: 0 },
+        });
+      } else {
+        toast.show('Unknown error. please, try again', {
+          icon: <Feather name='alert-circle' size={20} color='white' />,
+          placement: 'top',
+          type: 'danger',
+          duration: 4000,
+          style: { marginTop: 50 },
+          textStyle: { padding: 0 },
+        });
+      }
+      setLoading(false);
+    }
   }
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {

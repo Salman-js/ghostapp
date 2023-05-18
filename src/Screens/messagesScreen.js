@@ -3,9 +3,6 @@ import {
   Bubble,
   GiftedChat,
   InputToolbar,
-  Message,
-  MessageText,
-  Send,
   Time,
 } from 'react-native-gifted-chat';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -17,17 +14,8 @@ import { Avatar, IconButton, Surface } from '@react-native-material/core';
 import { Text } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
-import { newChat } from '../api/chats';
-import { auth, db } from '../../firebase';
+import { newChat, newMessage } from '../api/chats';
 import { useSelector } from 'react-redux';
-import {
-  arrayRemove,
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  updateDoc,
-} from 'firebase/firestore';
 
 function MessagesScreen() {
   const route = useRoute();
@@ -35,8 +23,17 @@ function MessagesScreen() {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const { user } = useSelector((state) => state.auth);
-  const sendMessageMutation = useMutation({
+  const newChatMutation = useMutation({
     mutationFn: newChat,
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+  const newMessageMutation = useMutation({
+    mutationFn: newMessage,
     onSuccess: (res) => {
       console.log(res);
     },
@@ -64,26 +61,13 @@ function MessagesScreen() {
       GiftedChat.append(previousMessages, messages)
     );
     if (messages.length > 0) {
-      const chatRef = doc(collection(db, 'chats'), item.id);
-      getDoc(chatRef).then((docSnapshot) => {
-        const chatData = docSnapshot.data();
-        const existingMessages = chatData.messages || [];
-
-        // Prepend the new message at index 0
-        const updatedMessages = [
-          {
-            body: messages[0].text,
-            sender: user?.uid,
-            createdAt: new Date().getTime(),
-          },
-          ...existingMessages,
-        ];
-
-        // Update the chat document with the modified messages array
-        return updateDoc(chatRef, { messages: updatedMessages });
+      newMessageMutation.mutate({
+        body: messages[0].text,
+        sender: user?.uid,
+        createdAt: new Date().getTime(),
       });
     } else {
-      sendMessageMutation.mutate({
+      newChatMutation.mutate({
         participants: [
           {
             userId: user?.uid,
