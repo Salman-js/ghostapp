@@ -12,7 +12,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { useToast } from 'react-native-toast-notifications';
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  onAuthStateChanged,
   updateProfile,
 } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
@@ -34,22 +34,35 @@ const SignUpScreen = () => {
   async function onSubmit() {
     setLoading(true);
     try {
-      const authUser = await createUserWithEmailAndPassword(
+      const { user } = await createUserWithEmailAndPassword(
         auth,
         signupData.email,
         signupData.password
       );
-      await updateProfile(authUser.user, {
-        displayName: signupData.name,
+      const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+        if (authUser && authUser.uid === user.uid) {
+          unsubscribe(); // Unsubscribe from the listener once the correct user is detected
+
+          updateProfile(authUser, {
+            displayName: signupData.name,
+          })
+            .then(() => {
+              addDoc(collection(db, 'users'), {
+                id: authUser.uid,
+                name: signupData.name,
+                email: signupData.email,
+              });
+              dispatch(setUser(authUser));
+              setLoading(false);
+            })
+            .catch((error) => {
+              console.error(error);
+              setLoading(false);
+            });
+        }
       });
-      await addDoc(collection(db, 'users'), {
-        userId: authUser.user.uid,
-      });
-      dispatch(setUser(user.user));
-      setLoading(false);
-      setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error.code === 'auth/email-already-in-use') {
         toast.show('There is already an account with that email', {
           icon: <Feather name='alert-triangle' size={20} color='white' />,
@@ -82,9 +95,8 @@ const SignUpScreen = () => {
     }
   }
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    const unsubscribe = onAuthStateChanged((authUser) => {
       if (authUser) {
-        console.log('Authenticated');
         navigation.navigate('Main');
         navigation.reset({
           index: 0,
@@ -193,18 +205,6 @@ const SignUpScreen = () => {
               containerStyle={tw.style('mt-3 mx-3 overflow-hidden')}
               onPress={onSubmit}
             />
-            {/* <Button
-              title='Sign up'
-              buttonStyle={tw.style('rounded-full py-3 overflow-hidden', {
-                backgroundColor: '#271b2d',
-              })}
-              disabledStyle={tw.style('', {
-                backgroundColor: '#271b2d',
-              })}
-              titleStyle={tw.style('font-bold text-xl')}
-              containerStyle={tw.style('mt-3 mx-3 overflow-hidden')}
-              onPress={() => navigation.navigate('Messages')}
-            /> */}
           </View>
         </Surface>
         <View className='w-full flex flex-row items-center justify-center'>
@@ -213,8 +213,6 @@ const SignUpScreen = () => {
           <Divider style={tw.style('w-1/3')} color='#6c7c9a85' />
         </View>
         <View className='w-full my-3 p-6 rounded-3xl bg-[#32283c]'>
-          {/* <FacebookAuth />
-        <GoogleAuth /> */}
           <GoogleSocialButton
             onPress={() => console.log('')}
             buttonViewStyle={tw.style('w-full h-12 rounded-full border-0', {
