@@ -5,19 +5,20 @@ import { Avatar, IconButton, Pressable } from '@react-native-material/core';
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useSelector } from 'react-redux';
-import { RefreshControl } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
-import { Button, ListItem } from '@rneui/themed';
 import ChatItem from '../Components/chatItem';
 import { FAB, Surface } from 'react-native-paper';
 import { useRefreshToken } from '../Components/Auth Components/useRefreshToken';
 import { auth, db } from '../../firebase';
 import { updateProfile } from 'firebase/auth';
-import { collection, onSnapshot, where } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, where } from 'firebase/firestore';
+import { useRoute } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }) => {
   const { isRefreshing, refresh, refreshToken } = useRefreshToken();
   const scrollView = useRef(null);
+  const route = useRoute();
+  const name = route.params?.name;
   const { user } = useSelector((state) => state.auth);
   const toast = useToast(null);
   const [chats, setChats] = useState([]);
@@ -31,6 +32,24 @@ const HomeScreen = ({ navigation }) => {
       });
     }
   }, [user]);
+  useEffect(() => {
+    if (name) {
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      })
+        .then(() => {
+          addDoc(collection(db, 'users'), {
+            id: auth.currentUser.uid,
+            name: name,
+            email: auth.currentUser.email,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
+    }
+  }, []);
   useEffect(() => {
     const unsubscribe = onSnapshot(
       chatsCollection,

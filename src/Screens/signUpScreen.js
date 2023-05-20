@@ -33,71 +33,50 @@ const SignUpScreen = () => {
   });
   async function onSubmit() {
     setLoading(true);
-    try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        signupData.email,
-        signupData.password
-      );
-      const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-        if (authUser && authUser.uid === user.uid) {
-          unsubscribe(); // Unsubscribe from the listener once the correct user is detected
-
-          updateProfile(authUser, {
-            displayName: signupData.name,
-          })
-            .then(() => {
-              addDoc(collection(db, 'users'), {
-                id: authUser.uid,
-                name: signupData.name,
-                email: signupData.email,
-              });
-              dispatch(setUser(authUser));
-              setLoading(false);
-            })
-            .catch((error) => {
-              console.error(error);
-              setLoading(false);
-            });
+    createUserWithEmailAndPassword(auth, signupData.email, signupData.password)
+      .then(({ user }) => {
+        dispatch(setUser(user));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.code === 'auth/email-already-in-use') {
+          toast.show('There is already an account with that email', {
+            icon: <Feather name='alert-triangle' size={20} color='white' />,
+            placement: 'top',
+            type: 'warning',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        } else if (error.code === 'auth/weak-password') {
+          toast.show('Password is too weak', {
+            icon: <Feather name='alert-triangle' size={20} color='white' />,
+            placement: 'top',
+            type: 'warning',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
+        } else {
+          toast.show('Unknown error. please, try again', {
+            icon: <Feather name='alert-circle' size={20} color='white' />,
+            placement: 'top',
+            type: 'danger',
+            duration: 4000,
+            style: { marginTop: 50 },
+            textStyle: { padding: 0 },
+          });
         }
+        setLoading(false);
       });
-    } catch (error) {
-      console.error(error);
-      if (error.code === 'auth/email-already-in-use') {
-        toast.show('There is already an account with that email', {
-          icon: <Feather name='alert-triangle' size={20} color='white' />,
-          placement: 'top',
-          type: 'warning',
-          duration: 4000,
-          style: { marginTop: 50 },
-          textStyle: { padding: 0 },
-        });
-      } else if (error.code === 'auth/weak-password') {
-        toast.show('Password is too weak', {
-          icon: <Feather name='alert-triangle' size={20} color='white' />,
-          placement: 'top',
-          type: 'warning',
-          duration: 4000,
-          style: { marginTop: 50 },
-          textStyle: { padding: 0 },
-        });
-      } else {
-        toast.show('Unknown error. please, try again', {
-          icon: <Feather name='alert-circle' size={20} color='white' />,
-          placement: 'top',
-          type: 'danger',
-          duration: 4000,
-          style: { marginTop: 50 },
-          textStyle: { padding: 0 },
-        });
-      }
-      setLoading(false);
-    }
   }
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged((authUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
       if (authUser) {
-        navigation.navigate('Main');
+        navigation.navigate('Main', {
+          name: signupData.name,
+        });
         navigation.reset({
           index: 0,
           routes: [{ name: 'Main' }],
